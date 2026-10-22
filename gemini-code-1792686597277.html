@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ta" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Nandhu! 🎂💙</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Playfair Display, Poppins, and Noto Serif Tamil -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --bg-midnight: #02040c;
+            --bg-deep-navy: #050b18;
+            --neon-cyan: #00f3ff;
+            --neon-blue: #0066ff;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 0%, #0a1736 0%, #030714 50%, #02040c 100%);
+            color: #f1f5f9;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .font-tamil {
+            font-family: 'Noto Serif Tamil', serif;
+            line-height: 2.15;
+        }
+
+        .font-serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Midnight Blue + Neon Glassmorphism */
+        .neon-glass {
+            background: rgba(5, 11, 24, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 243, 255, 0.35);
+            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.9), inset 0 0 25px rgba(0, 243, 255, 0.12);
+        }
+
+        .neon-glow-text {
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.8), 0 0 45px rgba(0, 102, 255, 0.6);
+        }
+
+        /* Photo Cards */
+        .photo-card {
+            transition: all 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .photo-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0, 243, 255, 0.45);
+            border-color: rgba(0, 243, 255, 0.95);
+        }
+
+        /* Floating Animation */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-14px) rotate(2deg); }
+        }
+
+        .animate-float {
+            animation: floatSlow 4.5s ease-in-out infinite;
+        }
+
+        /* Neon Pulse Button */
+        @keyframes neonPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.6), 0 0 50px rgba(0, 102, 255, 0.4); }
+            50% { box-shadow: 0 0 35px rgba(0, 243, 255, 0.95), 0 0 75px rgba(0, 102, 255, 0.8); }
+        }
+
+        .glow-button {
+            animation: neonPulse 2.2s infinite;
+        }
+
+        /* Candle Flame Animation */
+        @keyframes flicker {
+            0%, 100% { transform: scale(1) rotate(-2deg); opacity: 0.95; }
+            50% { transform: scale(1.12) rotate(2deg); opacity: 1; }
+        }
+
+        .flame {
+            animation: flicker 0.5s infinite alternate;
+            box-shadow: 0 0 25px #00f3ff, 0 0 50px #0066ff, 0 0 80px #00ffff;
+        }
+
+        /* Stanza Hover Spotlight */
+        .stanza-box {
+            transition: all 0.35s ease;
+        }
+        .stanza-box:hover {
+            background: rgba(0, 243, 255, 0.12);
+            border-color: rgba(0, 243, 255, 0.7);
+            transform: scale(1.015);
+            box-shadow: 0 8px 30px rgba(0, 243, 255, 0.25);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #02040c; }
+        ::-webkit-scrollbar-thumb { background: #0066ff; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00f3ff; }
+    </style>
+</head>
+<body class="relative min-h-screen selection:bg-cyan-400 selection:text-slate-950">
+
+    <!-- Background Floating Stars, Moons & Love Emojis Canvas -->
+    <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- Floating Top Navigation Bar -->
+    <header class="fixed top-4 inset-x-0 z-40 max-w-5xl mx-auto px-4">
+        <nav class="neon-glass rounded-full px-6 py-3 flex items-center justify-between">
+            <a href="#" class="text-cyan-300 font-serif-title font-bold text-lg sm:text-xl tracking-wide">
+                Happy Birthday Nandhu! 💙
+            </a>
+
+            <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-200">
+                <a href="#hero-section" class="hover:text-cyan-300 transition">Home</a>
+                <a href="#poem-section" class="hover:text-cyan-300 transition">என் கவிதை (Poem)</a>
+                <a href="#cake-section" class="hover:text-cyan-300 transition">Make a Wish</a>
+                <a href="#memories-section" class="hover:text-cyan-300 transition">Memories</a>
+            </div>
+
+            <!-- Music Box Chime Toggle -->
+            <button id="musicBtn" onclick="toggleMusic()" class="px-4 py-1.5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-200 text-xs sm:text-sm flex items-center gap-2 hover:bg-cyan-500/30 transition">
+                <span id="musicText">Melody On</span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Entrance Welcome Overlay -->
+    <div id="welcomeOverlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#02040c]/95 backdrop-blur-2xl transition-opacity duration-1000 px-4 text-center">
+        <div class="relative mb-6">
+            <div class="absolute -inset-6 bg-cyan-500/30 rounded-full blur-2xl animate-pulse"></div>
+            <div class="animate-float relative text-7xl sm:text-8xl select-none">🎂</div>
+        </div>
+
+        <h1 class="font-serif-title text-4xl sm:text-6xl md:text-7xl font-bold text-white mb-4 neon-glow-text">
+            Happy Birthday Nandhu! 🎂
+        </h1>
+
+        <p class="text-cyan-100 font-tamil text-base sm:text-xl mb-10 max-w-lg leading-relaxed">
+            என் இதயத்தில் இறுதிவரை இருக்கும் என் காதலிக்கு ஒரு சிறிய பிறந்தநாள் பரிசு 💙
+        </p>
+
+        <button onclick="openSurprise()" class="glow-button px-9 py-4 rounded-full bg-gradient-to-r from-cyan-400 via-blue-600 to-cyan-400 text-slate-950 font-bold text-base sm:text-lg tracking-wide hover:scale-105 active:scale-95 transition-all duration-300">
+            Tap to Unwrap Your Surprise, Nandhu 💙
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <main class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24">
+
+        <!-- HERO SECTION -->
+        <section id="hero-section" class="min-h-[82vh] flex flex-col lg:flex-row items-center justify-between gap-12 py-10">
+            <div class="lg:w-3/5 text-center lg:text-left space-y-6">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/15 border border-cyan-400/40 text-cyan-300 text-sm font-medium shadow-inner">
+                    <span>👑</span>
+                    <span>Celebrating The Queen of My Heart</span>
+                </div>
+
+                <h1 class="font-serif-title text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight">
+                    Happy Birthday <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-cyan-200 neon-glow-text">
+                        Nandhu! 🎂💙
+                    </span>
+                </h1>
+
+                <!-- Dynamic Typewriter Subtitle -->
+                <div class="h-14 sm:h-10 flex items-center justify-center lg:justify-start">
+                    <p id="typewriterText" class="font-tamil text-lg sm:text-2xl text-cyan-300 font-semibold"></p>
+                    <span class="text-cyan-400 text-2xl animate-pulse ml-1">|</span>
+                </div>
+
+                <!-- Highlight Badges -->
+                <div class="grid grid-cols-3 gap-3 max-w-md mx-auto lg:mx-0 pt-2">
+                    <div class="neon-glass rounded-2xl p-3 text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-cyan-300">∞</div>
+                        <div class="text-xs text-cyan-100 font-tamil">என்றும் காதல்</div>
+                    </div>
+                    <div class="neon-glass rounded-2xl p-3 text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-cyan-300">1st</div>
+                        <div class="text-xs text-cyan-100 font-tamil">என் முதல் கவிதை</div>
+                    </div>
+                    <div class="neon-glass rounded-2xl p-3 text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-cyan-300">100%</div>
+                        <div class="text-xs text-cyan-100 font-tamil">உனக்காக மட்டுமே</div>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex flex-wrap justify-center lg:justify-start gap-4">
+                    <a href="#poem-section" class="px-8 py-4 rounded-full bg-gradient-to-r from-cyan-400 to-blue-600 hover:from-cyan-300 hover:to-blue-500 text-slate-950 font-bold shadow-[0_0_30px_rgba(0,243,255,0.6)] transition-all">
+                        Read My Poem For You 📜
+                    </a>
+                    <a href="#cake-section" class="px-8 py-4 rounded-full neon-glass text-cyan-200 hover:border-cyan-400 font-medium transition-all">
+                        Cut Your Birthday Cake 🎂
+                    </a>
+                </div>
+            </div>
+
+            <!-- Hero Featured Photo Stack -->
+            <div class="lg:w-2/5 flex justify-center">
+                <div class="relative group">
+                    <div class="absolute -inset-3 bg-gradient-to-tr from-blue-600 via-cyan-400 to-blue-500 rounded-3xl blur-2xl opacity-75 group-hover:opacity-100 transition duration-500"></div>
+                    <div class="absolute inset-0 bg-cyan-500/20 border border-cyan-300/30 rounded-3xl rotate-6 scale-95 transition-transform group-hover:rotate-3"></div>
+
+                    <div class="relative neon-glass p-4 rounded-3xl max-w-sm">
+                        <div class="relative overflow-hidden rounded-2xl">
+                            <img src="4.jpeg" alt="Happy Birthday Nandhu" class="w-full h-[410px] object-cover group-hover:scale-105 transition duration-700" />
+                            <div class="absolute top-3 right-3 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-cyan-400/40 text-xs text-cyan-300 font-semibold">
+                                My Kanmaniye 💙
+                            </div>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <p class="font-serif-title text-lg font-bold text-white">Happy Birthday Nandhu! 🎂</p>
+                            <p class="font-tamil text-cyan-200 text-xs sm:text-sm mt-1">உன் கூந்தல் மல்லிகை மணமும், மாறாத நம் புன்னகையும் 💙</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAMIL POEM SHOWCASE SECTION -->
+        <section id="poem-section" class="py-16 scroll-mt-20">
+            <div class="text-center mb-10">
+                <span class="text-cyan-400 text-xs sm:text-sm uppercase tracking-widest font-semibold">Written From My Heart For Nandhu</span>
+                <h2 class="font-tamil text-3xl sm:text-5xl font-bold text-white mt-2 neon-glow-text">
+                    உனக்காக நான் எழுதிய முதல் கவிதை 💙
+                </h2>
+                <div class="w-28 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent mx-auto mt-4"></div>
+            </div>
+
+            <div class="relative max-w-4xl mx-auto">
+                <div class="absolute -top-10 -left-10 w-44 h-44 bg-cyan-500/25 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-10 -right-10 w-44 h-44 bg-blue-500/25 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="neon-glass rounded-3xl p-6 sm:p-12 md:p-16 relative overflow-hidden">
+                    <div class="text-cyan-400/20 text-8xl font-serif absolute top-2 left-6 select-none">“</div>
+
+                    <div class="text-center mb-10 relative z-10">
+                        <span class="inline-block px-4 py-1 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 text-xs mb-3">
+                            Dedicated to Nandhu 💙
+                        </span>
+                        <p class="font-tamil text-xl sm:text-2xl md:text-3xl font-bold text-cyan-300 tracking-wide">
+                            காரணமே இல்லாமல் எழுதிய என் கைகளால்
+                        </p>
+                    </div>
+
+                    <!-- ORIGINAL POEM CONTAINER ONLY -->
+                    <div id="poemOriginal" class="font-tamil text-base sm:text-lg md:text-xl text-slate-100 space-y-5 text-center relative z-10">
+                        <div class="stanza-box p-4 rounded-2xl bg-cyan-950/30 border border-cyan-400/20">
+                            முதல் முறையாக கவிதை எழுதினே உன் காதலுகாக<br>
+                            காலங்கள் கடந்து வந்தாலும் காத்திறுப்பேன் உன் காதல் ஒன்றுகாக.
+                        </div>
+
+                        <div class="stanza-box p-4 rounded-2xl bg-cyan-950/30 border border-cyan-400/20">
+                            கோவத்தால் கொதிக்கும் கண்களை கோவம் குறையும் வரை உன் கன்னங்கள் கொஞ்சுவேன் என் கைகளால்<br>
+                            கதைகலை பேசி செலவழித்தோம் கடந்த காலத்தை கைகளை கோர்த்து கரம் பிடித்து வாழ்ந்து காட்டுவோம் எதிர்காலத்தை.
+                        </div>
+
+                        <div class="stanza-box p-4 rounded-2xl bg-cyan-950/30 border border-cyan-400/20">
+                            கண்களை இருத்தி மூச்சினை முட்டி கைகளை கட்டி உன் கன்னங்கள் சிவக்கும் வரை முத்தம் கொடுத்து மூழ்கடித்து நின்பேன்
+                        </div>
+
+                        <div class="stanza-box p-4 rounded-2xl bg-cyan-950/30 border border-cyan-400/20">
+                            விட்டு விட்டு சென்றாலும் விட்டு விடுவேன் என்று நினைத்தாயே விடமாட்டேன் விதையாய் முலைத்து வருவேன் உன் காதல் ஒன்றுகாக<br>
+                            மழை காலத்தில் வரும் காற்றில் விதையாய் கலந்து மண்ணில் மறைந்து செடியாய் முலைத்து பூவாய் மலர்ந்து வருவேன் உன் கூந்தல் மணத்திற்காக
+                        </div>
+
+                        <div class="stanza-box p-4 rounded-2xl bg-cyan-950/30 border border-cyan-400/20">
+                            ஓடி ஆடி உக்கார்ந்த நேரத்தில் உன் உறவை ரசித்தேன் ஆடி பாடி அமர்ந்த நேரத்தில் உன் அழகை ரசித்தேன் (வர்னித்தேன்)<br>
+                            வாழ்க்கை உள்ள வரை வழி துணையாய் வருவேன் காலங்கள் உள்ள வரை என் கைகளால் உன்னை கட்டி அணைத்து காதலனாய் வருவேன்டி என் கன்மணியே
+                        </div>
+
+                        <div class="stanza-box p-4 rounded-2xl bg-cyan-950/30 border border-cyan-400/20">
+                            காதல் என்ற மூன்று எழுத்தில் மறையாத நம் காதல் காலங்கள் இருக்கும் வரை உயிரின் உணர்வாய் நிற்கும்<br>
+                            கடல் அலை அடிக்கும் நின்றாலும் நான் உன் மீது வைத்திருக்கும் காதல் பாசம் குறையாது(மா)டி
+                        </div>
+
+                        <div class="p-6 rounded-2xl bg-gradient-to-r from-blue-950/80 via-cyan-950/80 to-blue-950/80 border border-cyan-400/50 shadow-[0_0_35px_rgba(0,243,255,0.3)]">
+                            <p class="font-semibold text-cyan-200">
+                                இருதியாக கூறுகிறேன் என் இருதி மூச்சி உனக்காக என் இதய மூச்சும் உனக்காக<br>
+                                என் உடல் பொருள் காதல், வாழ்கை அனைத்தும் உனக்காக தாண்டி<br>
+                                புறிந்துகொல் என்ன ஏற்றுக் கொல்டி என் இதயத்தில் இறுதிவரை இருக்கும் என் காதலியே ! 💙
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex items-center justify-between border-t border-cyan-400/25 pt-6 text-sm sm:text-base">
+                        <span class="text-cyan-200/80">Happy Birthday Nandhu! 🎂</span>
+                        <span class="font-tamil text-cyan-400 italic font-semibold">— என்றும் உன் காதலன் 💙</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTERACTIVE BIRTHDAY CAKE SECTION (PLACED AT THE MIDDLE) -->
+        <section id="cake-section" class="py-16 text-center scroll-mt-20">
+            <div class="neon-glass max-w-2xl mx-auto rounded-3xl p-8 sm:p-12 relative overflow-hidden">
+                <span class="px-4 py-1 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 text-xs uppercase tracking-widest">
+                    Birthday Celebration
+                </span>
+                <h3 class="font-serif-title text-3xl sm:text-5xl text-white mt-3 mb-2 neon-glow-text">
+                    Happy Birthday Nandhu! 🎂
+                </h3>
+                <p id="candleInstruction" class="text-cyan-200 text-sm sm:text-base mb-8">
+                    Tap the glowing blue candles below (or click "Blow Out Candles") to make your birthday wish!
+                </p>
+
+                <!-- 3-Candle Virtual Blue Cake -->
+                <div class="relative flex flex-col items-center justify-center my-6 select-none">
+                    <div class="flex items-end gap-8 mb-0">
+                        <div class="flex flex-col items-center cursor-pointer" onclick="blowAllCandles()">
+                            <div class="candle-flame w-5 h-9 bg-gradient-to-t from-cyan-400 via-blue-200 to-white rounded-full flame mb-1 transition-all duration-500"></div>
+                            <div class="w-1 h-2.5 bg-slate-300"></div>
+                            <div class="w-5 h-14 bg-gradient-to-b from-cyan-100 to-blue-600 rounded-t-sm border border-cyan-300"></div>
+                        </div>
+                        <div class="flex flex-col items-center cursor-pointer" onclick="blowAllCandles()">
+                            <div class="candle-flame w-6 h-11 bg-gradient-to-t from-cyan-400 via-blue-200 to-white rounded-full flame mb-1 transition-all duration-500"></div>
+                            <div class="w-1 h-3 bg-slate-300"></div>
+                            <div class="w-6 h-16 bg-gradient-to-b from-cyan-100 to-blue-600 rounded-t-sm border border-cyan-300"></div>
+                        </div>
+                        <div class="flex flex-col items-center cursor-pointer" onclick="blowAllCandles()">
+                            <div class="candle-flame w-5 h-9 bg-gradient-to-t from-cyan-400 via-blue-200 to-white rounded-full flame mb-1 transition-all duration-500"></div>
+                            <div class="w-1 h-2.5 bg-slate-300"></div>
+                            <div class="w-5 h-14 bg-gradient-to-b from-cyan-100 to-blue-600 rounded-t-sm border border-cyan-300"></div>
+                        </div>
+                    </div>
+
+                    <div class="w-48 h-14 bg-gradient-to-r from-blue-700 via-cyan-400 to-blue-700 rounded-t-2xl border-t-4 border-cyan-200 shadow-lg flex items-center justify-center">
+                        <div class="flex gap-3 text-xs">💙 ✨ 💙 ✨ 💙</div>
+                    </div>
+                    <div class="w-64 sm:w-72 h-20 bg-gradient-to-r from-blue-950 via-cyan-900 to-blue-950 rounded-t-2xl border-t-4 border-cyan-300 shadow-2xl flex items-center justify-center px-3">
+                        <span class="text-white font-serif-title font-bold tracking-wider text-sm sm:text-base drop-shadow">
+                            HAPPY BIRTHDAY NANDHU! 🎂
+                        </span>
+                    </div>
+                    <div class="w-72 sm:w-80 h-3.5 bg-gradient-to-r from-cyan-400/40 via-cyan-200/90 to-cyan-400/40 rounded-full shadow-lg"></div>
+                </div>
+
+                <div class="mt-6 flex justify-center gap-4">
+                    <button id="blowBtn" onclick="blowAllCandles()" class="px-7 py-3 rounded-full bg-gradient-to-r from-cyan-400 to-blue-600 text-slate-950 font-bold text-sm sm:text-base shadow-[0_0_30px_rgba(0,243,255,0.6)] hover:scale-105 transition">
+                        🌬️ Blow Out Candles, Nandhu!
+                    </button>
+                    <button id="relightBtn" onclick="relightCandles()" class="hidden px-6 py-3 rounded-full neon-glass text-cyan-200 text-sm hover:border-cyan-400 transition">
+                        🔥 Relight Candles
+                    </button>
+                </div>
+
+                <div id="wishMessage" class="hidden mt-8 p-6 rounded-2xl bg-cyan-950/80 border border-cyan-400/70 space-y-3 transition-all duration-700">
+                    <p class="text-2xl sm:text-3xl font-serif-title font-bold text-white neon-glow-text">
+                        Happy Birthday Nandhu! 🎂💙
+                    </p>
+                    <p class="font-tamil text-lg sm:text-xl text-cyan-300 font-semibold">
+                        இனிய பிறந்தநாள் வாழ்த்துக்கள் என் கண்மணியே! 🎉💙
+                    </p>
+                    <p class="text-slate-200 text-sm sm:text-base leading-relaxed">
+                        "வாழ்க்கை உள்ள வரை வழி துணையாய் வருவேன் காலங்கள் உள்ள வரை என் கைகளால் உன்னை கட்டி அணைத்து காதலனாய் வருவேன்டி என் கன்மணியே!"
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PHOTO GALLERY: OUR BEAUTIFUL MOMENTS -->
+        <section id="memories-section" class="py-16 scroll-mt-20">
+            <div class="text-center mb-12">
+                <span class="text-cyan-400 text-xs sm:text-sm uppercase tracking-widest font-semibold">Our Journey Together</span>
+                <h2 class="font-serif-title text-3xl sm:text-5xl font-bold text-white mt-2 neon-glow-text">
+                    Moments Frozen in Blue 💙
+                </h2>
+                <p class="font-tamil text-cyan-100 mt-3">கதைகளை பேசி செலவழித்த நம் அழகான தருணங்கள் — Tap any photo to view full screen</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="photo-card neon-glass rounded-2xl p-3 cursor-pointer group" onclick="openLightbox(0)">
+                    <div class="relative overflow-hidden rounded-xl">
+                        <img src="1.jpeg" alt="Memory 1" class="w-full h-72 object-cover group-hover:scale-110 transition duration-500" />
+                        <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 text-cyan-300 text-xs font-medium border border-cyan-400/40">#01 💙</span>
+                    </div>
+                    <p class="font-tamil text-xs sm:text-sm text-cyan-100 mt-3 text-center px-1">என் கண்மணியே — உன் புன்னகையில் தொலைந்த தருணம் 💙</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="photo-card neon-glass rounded-2xl p-3 cursor-pointer group" onclick="openLightbox(1)">
+                    <div class="relative overflow-hidden rounded-xl">
+                        <img src="2.jpeg" alt="Memory 2" class="w-full h-72 object-cover group-hover:scale-110 transition duration-500" />
+                        <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 text-cyan-300 text-xs font-medium border border-cyan-400/40">#02 ✨</span>
+                    </div>
+                    <p class="font-tamil text-xs sm:text-sm text-cyan-100 mt-3 text-center px-1">கைகளை கோர்த்து வாழ்ந்து காட்டுவோம் எதிர்காலத்தை ✨</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="photo-card neon-glass rounded-2xl p-3 cursor-pointer group" onclick="openLightbox(2)">
+                    <div class="relative overflow-hidden rounded-xl">
+                        <img src="3.jpeg" alt="Memory 3" class="w-full h-72 object-cover group-hover:scale-110 transition duration-500" />
+                        <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 text-cyan-300 text-xs font-medium border border-cyan-400/40">#03 🌸</span>
+                    </div>
+                    <p class="font-tamil text-xs sm:text-sm text-cyan-100 mt-3 text-center px-1">பூவாய் மலர்ந்து வருவேன் உன் கூந்தல் மணத்திற்காக 🌸</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="photo-card neon-glass rounded-2xl p-3 cursor-pointer group" onclick="openLightbox(3)">
+                    <div class="relative overflow-hidden rounded-xl">
+                        <img src="4.jpeg" alt="Memory 4" class="w-full h-72 object-cover group-hover:scale-110 transition duration-500" />
+                        <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 text-cyan-300 text-xs font-medium border border-cyan-400/40">May 08, 2024 🛕</span>
+                    </div>
+                    <p class="font-tamil text-xs sm:text-sm text-cyan-100 mt-3 text-center px-1">வாழ்க்கை உள்ள வரை வழி துணையாய் வருவேன் 🛕</p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="photo-card neon-glass rounded-2xl p-3 cursor-pointer group" onclick="openLightbox(4)">
+                    <div class="relative overflow-hidden rounded-xl">
+                        <img src="5.jpeg" alt="Memory 5" class="w-full h-72 object-cover group-hover:scale-110 transition duration-500" />
+                        <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 text-cyan-300 text-xs font-medium border border-cyan-400/40">#05 💫</span>
+                    </div>
+                    <p class="font-tamil text-xs sm:text-sm text-cyan-100 mt-3 text-center px-1">என் தோளில் சாயும் உன் அழகிய கண்கள் 💫</p>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="photo-card neon-glass rounded-2xl p-3 cursor-pointer group" onclick="openLightbox(5)">
+                    <div class="relative overflow-hidden rounded-xl">
+                        <img src="6.jpeg" alt="Memory 6" class="w-full h-72 object-cover group-hover:scale-110 transition duration-500" />
+                        <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 text-cyan-300 text-xs font-medium border border-cyan-400/40">#06 😊</span>
+                    </div>
+                    <p class="font-tamil text-xs sm:text-sm text-cyan-100 mt-3 text-center px-1">ஆடி பாடி அமர்ந்த நேரத்தில் உன் அழகை ரசித்தேன் 😊</p>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="photo-card neon-glass rounded-2xl p-3 cursor-pointer group" onclick="openLightbox(6)">
+                    <div class="relative overflow-hidden rounded-xl">
+                        <img src="7.jpeg" alt="Memory 7" class="w-full h-72 object-cover group-hover:scale-110 transition duration-500" />
+                        <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 text-cyan-300 text-xs font-medium border border-cyan-400/40">#07 💍</span>
+                    </div>
+                    <p class="font-tamil text-xs sm:text-sm text-cyan-100 mt-3 text-center px-1">காதல் என்ற மூன்று எழுத்தில் மறையாத நம் வாக்குறுதி 💍</p>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="photo-card neon-glass rounded-2xl p-3 cursor-pointer group" onclick="openLightbox(7)">
+                    <div class="relative overflow-hidden rounded-xl">
+                        <img src="8.jpeg" alt="Memory 8" class="w-full h-72 object-cover group-hover:scale-110 transition duration-500" />
+                        <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 text-cyan-300 text-xs font-medium border border-cyan-400/40">#08 💙</span>
+                    </div>
+                    <p class="font-tamil text-xs sm:text-sm text-cyan-100 mt-3 text-center px-1">என் கைகளால் உன்னை கட்டி அணைத்து காதலனாய் வருவேன்டி 💙</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center pt-8 border-t border-cyan-500/20 text-cyan-300/80 text-sm space-y-2">
+            <p class="font-serif-title text-base text-cyan-200">Made with Endless Love for Nandhu 🎂💙</p>
+            <p class="font-tamil text-xs">என் இதயத்தில் இறுதிவரை இருக்கும் என் காதலியே</p>
+        </footer>
+
+    </main>
+
+    <!-- Lightbox Modal with Next/Prev Controls -->
+    <div id="lightbox" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-lg p-4" onclick="closeLightbox()">
+        <div class="max-w-3xl w-full neon-glass p-4 sm:p-6 rounded-3xl text-center relative" onclick="event.stopPropagation()">
+            <button onclick="closeLightbox()" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-slate-900/80 text-cyan-300 hover:bg-cyan-400 hover:text-slate-950 font-bold text-xl transition">✕</button>
+            <button onclick="changeSlide(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-slate-900/80 text-cyan-300 hover:bg-cyan-400 hover:text-slate-950 font-bold text-lg transition">❮</button>
+            <button onclick="changeSlide(1)" class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-slate-900/80 text-cyan-300 hover:bg-cyan-400 hover:text-slate-950 font-bold text-lg transition">❯</button>
+
+            <img id="lightboxImg" src="" alt="Memory with Nandhu" class="max-h-[72vh] mx-auto rounded-2xl object-contain shadow-2xl" />
+            <p id="lightboxCaption" class="font-tamil text-cyan-200 text-base sm:text-lg mt-4 px-6"></p>
+            <p id="lightboxCounter" class="text-xs text-cyan-400/80 mt-1"></p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const galleryItems = [
+            { src: '1.jpeg', caption: 'என் கண்மணியே — உன் புன்னகையில் தொலைந்த தருணம் 💙' },
+            { src: '2.jpeg', caption: 'கைகளை கோர்த்து வாழ்ந்து காட்டுவோம் எதிர்காலத்தை ✨' },
+            { src: '3.jpeg', caption: 'பூவாய் மலர்ந்து வருவேன் உன் கூந்தல் மணத்திற்காக 🌸' },
+            { src: '4.jpeg', caption: 'May 08, 2024 — வாழ்க்கை உள்ள வரை வழி துணையாய் வருவேன் 🛕' },
+            { src: '5.jpeg', caption: 'என் தோளில் சாயும் உன் அழகிய கண்கள் 💫' },
+            { src: '6.jpeg', caption: 'ஆடி பாடி அமர்ந்த நேரத்தில் உன் அழகை ரசித்தேன் 😊' },
+            { src: '7.jpeg', caption: 'காதல் என்ற மூன்று எழுத்தில் மறையாத நம் வாக்குறுதி 💍' },
+            { src: '8.jpeg', caption: 'என் கைகளால் உன்னை கட்டி அணைத்து காதலனாய் வருவேன்டி 💙' }
+        ];
+        let currentSlideIndex = 0;
+
+        // Typewriter Effect
+        const phrases = [
+            "இனிய பிறந்தநாள் வாழ்த்துக்கள் என் கண்மணியே! 🎂💙",
+            "காலங்கள் கடந்து வந்தாலும் காத்திருப்பேன் உன் காதல் ஒன்றுக்காக...",
+            "வாழ்க்கை உள்ள வரை வழி துணையாய் வருவேன் 💙",
+            "Happy Birthday Nandhu! You are my forever poetry ✨"
+        ];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typeEl = document.getElementById('typewriterText');
+
+        function typeLoop() {
+            const currentPhrase = phrases[phraseIndex];
+            if (isDeleting) {
+                typeEl.textContent = currentPhrase.substring(0, charIndex--);
+            } else {
+                typeEl.textContent = currentPhrase.substring(0, charIndex++);
+            }
+
+            let speed = isDeleting ? 35 : 70;
+            if (!isDeleting && charIndex === currentPhrase.length + 1) {
+                speed = 2200;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                speed = 400;
+            }
+            setTimeout(typeLoop, speed);
+        }
+        typeLoop();
+
+        // Confetti
+        function launchBlueConfetti() {
+            confetti({
+                particleCount: 130,
+                spread: 90,
+                origin: { y: 0.6 },
+                colors: ['#00f3ff', '#0066ff', '#ffffff', '#38bdf8', '#00ffff']
+            });
+        }
+
+        // Web Audio API Music
+        let audioCtx = null;
+        let isPlayingMusic = false;
+        let melodyTimeout = null;
+
+        const happyBirthdayNotes = [
+            { f: 261.63, d: 0.35 }, { f: 261.63, d: 0.25 }, { f: 293.66, d: 0.55 }, { f: 261.63, d: 0.55 }, { f: 349.23, d: 0.55 }, { f: 329.63, d: 1.0 },
+            { f: 261.63, d: 0.35 }, { f: 261.63, d: 0.25 }, { f: 293.66, d: 0.55 }, { f: 261.63, d: 0.55 }, { f: 392.00, d: 0.55 }, { f: 349.23, d: 1.0 },
+            { f: 261.63, d: 0.35 }, { f: 261.63, d: 0.25 }, { f: 523.25, d: 0.55 }, { f: 440.00, d: 0.55 }, { f: 349.23, d: 0.55 }, { f: 329.63, d: 0.55 }, { f: 293.66, d: 0.9 },
+            { f: 466.16, d: 0.35 }, { f: 466.16, d: 0.25 }, { f: 440.00, d: 0.55 }, { f: 349.23, d: 0.55 }, { f: 392.00, d: 0.55 }, { f: 349.23, d: 1.2 }
+        ];
+
+        function playMusicBoxLoop() {
+            if (!isPlayingMusic) return;
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+            let time = audioCtx.currentTime + 0.1;
+            let totalDuration = 0;
+
+            happyBirthdayNotes.forEach(note => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(note.f, time);
+
+                gain.gain.setValueAtTime(0.001, time);
+                gain.gain.exponentialRampToValueAtTime(0.12, time + 0.04);
+                gain.gain.exponentialRampToValueAtTime(0.0001, time + note.d + 0.3);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(time);
+                osc.stop(time + note.d + 0.35);
+
+                time += note.d;
+                totalDuration += note.d;
+            });
+
+            melodyTimeout = setTimeout(playMusicBoxLoop, (totalDuration + 1.5) * 1000);
+        }
+
+        function toggleMusic() {
+            const text = document.getElementById('musicText');
+            isPlayingMusic = !isPlayingMusic;
+            if (isPlayingMusic) {
+                text.innerText = 'Melody On';
+                playMusicBoxLoop();
+            } else {
+                text.innerText = 'Melody Muted';
+                clearTimeout(melodyTimeout);
+            }
+        }
+
+        function openSurprise() {
+            const overlay = document.getElementById('welcomeOverlay');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => overlay.style.display = 'none', 1000);
+            launchBlueConfetti();
+            if (!isPlayingMusic) toggleMusic();
+        }
+
+        function blowAllCandles() {
+            const flames = document.querySelectorAll('.candle-flame');
+            flames.forEach(f => {
+                f.style.opacity = '0';
+                f.style.transform = 'scale(0)';
+            });
+
+            document.getElementById('candleInstruction').innerText = '🎉 Yay! Happy Birthday Nandhu! 🎂💙';
+            document.getElementById('wishMessage').classList.remove('hidden');
+            document.getElementById('blowBtn').classList.add('hidden');
+            document.getElementById('relightBtn').classList.remove('hidden');
+
+            launchBlueConfetti();
+            setTimeout(launchBlueConfetti, 450);
+            setTimeout(launchBlueConfetti, 900);
+        }
+
+        function relightCandles() {
+            const flames = document.querySelectorAll('.candle-flame');
+            flames.forEach(f => {
+                f.style.opacity = '1';
+                f.style.transform = 'scale(1)';
+            });
+            document.getElementById('candleInstruction').innerText = 'Tap the glowing blue candles below to make another wish!';
+            document.getElementById('blowBtn').classList.remove('hidden');
+            document.getElementById('relightBtn').classList.add('hidden');
+        }
+
+        function openLightbox(index) {
+            currentSlideIndex = index;
+            updateLightboxContent();
+            const lb = document.getElementById('lightbox');
+            lb.classList.remove('hidden');
+            lb.classList.add('flex');
+        }
+
+        function updateLightboxContent() {
+            const item = galleryItems[currentSlideIndex];
+            document.getElementById('lightboxImg').src = item.src;
+            document.getElementById('lightboxCaption').innerText = item.caption;
+            document.getElementById('lightboxCounter').innerText = `Memory ${currentSlideIndex + 1} of ${galleryItems.length}`;
+        }
+
+        function changeSlide(step) {
+            currentSlideIndex = (currentSlideIndex + step + galleryItems.length) % galleryItems.length;
+            updateLightboxContent();
+        }
+
+        function closeLightbox() {
+            const lb = document.getElementById('lightbox');
+            lb.classList.add('hidden');
+            lb.classList.remove('flex');
+        }
+
+        window.addEventListener('keydown', (e) => {
+            const lb = document.getElementById('lightbox');
+            if (lb.classList.contains('hidden')) return;
+            if (e.key === 'ArrowRight') changeSlide(1);
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'Escape') closeLightbox();
+        });
+
+        // Floating Stars, Moons & Love Emojis Background Canvas
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 100;
+                this.size = Math.random() * 16 + 8;
+                this.speedY = Math.random() * 0.9 + 0.3;
+                this.speedX = (Math.random() - 0.5) * 0.6;
+                this.opacity = Math.random() * 0.75 + 0.2;
+                
+                const rand = Math.random();
+                if (rand < 0.35) this.symbol = '💙';
+                else if (rand < 0.55) this.symbol = '✨';
+                else if (rand < 0.75) this.symbol = '⭐';
+                else if (rand < 0.88) this.symbol = '🌙';
+                else if (rand < 0.95) this.symbol = '💖';
+                else this.symbol = '💫';
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX;
+                if (this.y < -30) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.font = `${this.size}px serif`;
+                ctx.shadowBlur = 18;
+                ctx.shadowColor = '#00f3ff';
+                ctx.fillText(this.symbol, this.x, this.y);
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 55; i++) {
+            const p = new Particle();
+            p.y = Math.random() * canvas.height;
+            particles.push(p);
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+    </script>
+</body>
+</html>
